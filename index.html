@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <title> Informe o CEP</title>
+</head>
+
+<body>
+    <div class="container">
+        <header class="row mt-3">
+            <div class="col">
+                <div class="card bg-primary">
+                    <div class="card-header mx-4 text-light ">
+                        <h1 class='text-center '> Informe o CEP</h1>
+                    </div>
+                </div>
+
+            </div>
+        </header>
+
+        <main class='row'>
+            <div class="col">
+                <form action="">
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <p class='bolder'>
+                                Digite o CEP e ao sair o campo o endereço será completado.
+                            </p>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class='mb-0' for="cep">CEP</label>
+                                        <input onblur='pesquisarCep(this.value)' class="form-control cep-mask"
+                                            placeholder="Ex.: 00000-000" type="text" id='cep'>
+                                        <div class='text-danger' id='error'></div>
+                                    </div>
+                                </div>
+                                <div class="col-7">
+                                    <div class="form-group">
+                                        <label class='mb-0' for="rua">Rua</label>
+                                        <input class='form-control' type="text" id='rua' readonly>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class='mb-0' for="ddd">DDD</label>
+                                        <input class='form-control' type="text" id='ddd' readonly>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class='mb-0' for="bairro">Bairro</label>
+                                        <input class='form-control' type="text" id='bairro' readonly>
+                                    </div>
+                                </div>
+                                <div class="col-5">
+                                    <div class="form-group">
+                                        <label class='mb-0' for="cidade">Cidade</label>
+                                        <input class='form-control' type="text" id='cidade' readonly>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class='mb-0' for="estado">Estado</label>
+                                        <input class='form-control' type="text" id='estado' readonly>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class='mb-0' for="gia">Gia</label>
+                                        <input class='form-control' type="text" id='gia' readonly>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class='mb-0' for="siafi">Siafi</label>
+                                        <input class='form-control' type="text" id='siafi' readonly>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class='mb-0' for="ibge">IBGE</label>
+                                        <input class='form-control' type="text" id='ibge' readonly>
+                                    </div>
+                                </div>
+                                <div class="col-8">
+                                    <div class="form-group">
+                                        <label class='mb-0' for="complemento">Complemento</label>
+                                        <input class='form-control' type="text" id='complemento' readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+
+        let pesquisarCep = (cep) => {
+            removeInfoErro();
+            fetch(`https://viacep.com.br/ws/${cep}/json/`).then(result => {
+                result.json().then(res => {
+                    if (res.erro) {
+                        resetForm();
+                        notificaErro();
+                    } else {
+                        document.getElementById('rua').value = res.logradouro;
+                        document.getElementById('bairro').value = res.bairro;
+                        document.getElementById('cidade').value = res.localidade;
+                        document.getElementById('estado').value = res.uf;
+                        document.getElementById('ddd').value = res.ddd;
+                        document.getElementById('gia').value = res.gia;
+                        document.getElementById('siafi').value = res.siafi;
+                        document.getElementById('ibge').value = res.ibge;
+                        document.getElementById('complemento').value = res.complemento;
+                    }
+                })
+            }).catch(err => {
+                resetForm();
+                notificaErro();
+            })
+        }
+
+        let resetForm = () => {
+            document.getElementById('rua').value = '';
+            document.getElementById('bairro').value = '';
+            document.getElementById('cidade').value = '';
+            document.getElementById('estado').value = '';
+            document.getElementById('ddd').value = '';
+            document.getElementById('gia').value = '';
+            document.getElementById('siafi').value = '';
+            document.getElementById('ibge').value = '';
+            document.getElementById('complemento').value = '';
+        }
+        let notificaErro = () => {
+            document.getElementById('error').innerText = 'CEP invalido';
+        }
+        let removeInfoErro = () => {
+            document.getElementById('error').innerText = '';
+        }
+    </script>
+</body>
+
+</html>
